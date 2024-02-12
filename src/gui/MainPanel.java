@@ -12,17 +12,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.NumberFormatter;
 
+import csv.DataReader;
+
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
-	
+	private DataReader reader = new DataReader();
 	private int bloodGlucose = 0;
 	private int carbs = 0;
 	private float bolus;
-	private int upperTarget = 180;
-	private int correctionFactor = 80;
-	private int ICRatio = 6;
+	private int upperTarget;
+	private int correctionFactor;
+	private int ICRatio;
 	
 	public MainPanel() {
+		correctionFactor = reader.getCurrentCF();
+		ICRatio = reader.getCurrentIC();
+		upperTarget = reader.getUpperTarget();
 		this.setLayout(new BorderLayout());
 		this.add(buildTopPanel(), BorderLayout.NORTH);
 		this.add(buildMidPanel(), BorderLayout.CENTER);

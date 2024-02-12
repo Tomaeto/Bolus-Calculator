@@ -1,14 +1,8 @@
 package gui;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JFrame;
 
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
 import csv.DataReader;
@@ -28,12 +22,11 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) throws IOException, CsvException {
     	MainFrame frame = new MainFrame();
-  //  	frame.setVisible(true);
+    	frame.setVisible(true);
     	
     	//Testing DataReader
 		DataReader reader = new DataReader();
-		System.out.println(reader.getCurrentIC());
-
-		System.out.println(reader.getCurrentCF());
+		System.out.println(reader.getLowerTarget());
+		System.out.println(reader.getUpperTarget());
     }
 }

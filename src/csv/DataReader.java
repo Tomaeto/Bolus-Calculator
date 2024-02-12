@@ -1,37 +1,44 @@
 package csv;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
 
 public class DataReader {
 	
-	private CSVReader ICReader;
-	private CSVReader CFReader;
+
 	
 	private List<String[]> ICData;
 	private List<String[]> CFData;
+	private List<String[]> TargetData;
 	
 	LocalTime time = LocalTime.now();
-	public DataReader() throws IOException, CsvException {
-		Reader IC = Files.newBufferedReader(Paths.get("./data/ICRatio.csv"));
-		Reader CF = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
-		
-		ICReader = new CSVReader(IC);
-		CFReader = new CSVReader(CF);
-		
-		ICData = ICReader.readAll();
-		CFData = CFReader.readAll();
-		
-		ICReader.close();
-		CFReader.close();
+	public DataReader() {
+		try {
+			Reader IC = Files.newBufferedReader(Paths.get("./data/ICRatio.csv"));
+			Reader CF = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
+			Reader Target = Files.newBufferedReader(Paths.get("./data/Targets.csv"));
+			
+			CSVReader ICReader = new CSVReader(IC);
+			CSVReader CFReader = new CSVReader(CF);
+			CSVReader TargetReader = new CSVReader(Target);
+			
+			ICData = ICReader.readAll();
+			CFData = CFReader.readAll();
+			TargetData = TargetReader.readAll();
+			
+			ICReader.close();
+			CFReader.close();
+			TargetReader.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	public List<String[]> getICData() {
@@ -44,7 +51,7 @@ public class DataReader {
 	
 	public int getCurrentIC() {
 		LocalTime start, end;
-		for (String[] entry : ICData) {
+		for (String[] entry : ICData.subList(1,ICData.size())) {
 			start = LocalTime.parse(entry[1]);
 			end = LocalTime.parse(entry[2]);
 			if (time.isBefore(end) && time.isAfter(start)) {
@@ -56,7 +63,7 @@ public class DataReader {
 	
 	public int getCurrentCF() {
 		LocalTime start, end;
-		for (String[] entry : CFData) {
+		for (String[] entry : CFData.subList(1, CFData.size())) {
 			start = LocalTime.parse(entry[1]);
 			end = LocalTime.parse(entry[2]);
 			if (time.isBefore(end) && time.isAfter(start)) {
@@ -65,5 +72,14 @@ public class DataReader {
 		}
 		return -1;
 	}
+	
+	public int getUpperTarget() {
+		return Integer.parseInt(TargetData.get(1)[0]);
+	}
+	
+	public int getLowerTarget() {
+		return Integer.parseInt(TargetData.get(1)[1]);
+	}
+	
 	
 }
