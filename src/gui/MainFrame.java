@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
+import csv.DataReader;
+
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
@@ -27,9 +29,11 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) throws IOException, CsvException {
     	MainFrame frame = new MainFrame();
   //  	frame.setVisible(true);
-		Reader reader = Files.newBufferedReader(Paths.get("./data/ICRatio.csv"));   
-		CSVReader csv = new CSVReader(reader);
-		List<String[]> records = csv.readAll();
-		System.out.println(Arrays.toString(records.get(1)));
+    	
+    	//Testing DataReader
+		DataReader reader = new DataReader();
+		System.out.println(reader.getCurrentIC());
+
+		System.out.println(reader.getCurrentCF());
     }
 }
