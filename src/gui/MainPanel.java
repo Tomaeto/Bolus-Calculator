@@ -19,7 +19,7 @@ public class MainPanel extends JPanel {
 	private DataReader reader = new DataReader();
 	private int bloodGlucose = 0;
 	private int carbs = 0;
-	private float bolus;
+	private double bolus;
 	private int upperTarget;
 	private int correctionFactor;
 	private int ICRatio;
@@ -112,15 +112,16 @@ public class MainPanel extends JPanel {
 
 		JButton calcButton = new JButton("Generate");
 		calcButton.addActionListener((ActionEvent e) -> {
-			bolus = (float)carbs / (float)ICRatio;
+			bolus = (double)carbs / (double)ICRatio;
+			bolus = roundToHalf(bolus);
 			bolusText.setText("Bolus = " + carbs + " / " + ICRatio);
 
 			if (bloodGlucose > upperTarget) { 
-				bolus += (bloodGlucose - upperTarget) / (float)correctionFactor;
-				System.out.println(bolus);
+				bolus += (bloodGlucose - upperTarget) / (double)correctionFactor;
+				bolus = roundToHalf(bolus);
 				bolusText.setText(bolusText.getText() + " + (" + bloodGlucose + " - " + upperTarget + ") / " + correctionFactor);
 			}
-			calcButton.setText(Float.toString(bolus));
+			calcButton.setText(Double.toString(bolus));
 			super.update(getGraphics());
 		});
 		
@@ -128,6 +129,10 @@ public class MainPanel extends JPanel {
 		panel.add(calcButton, BorderLayout.SOUTH);
 
 		return panel;
+	}
+	
+	private static double roundToHalf(double f) {
+		return Math.round(f * 2) / 2.0;
 	}
 	
 	

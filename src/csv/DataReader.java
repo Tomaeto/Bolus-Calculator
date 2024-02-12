@@ -35,7 +35,7 @@ public class DataReader {
 			CFReader.close();
 			TargetReader.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -66,10 +66,11 @@ public class DataReader {
 		for (String[] entry : CFData.subList(1, CFData.size())) {
 			start = LocalTime.parse(entry[1]);
 			end = LocalTime.parse(entry[2]);
-			if (time.isBefore(end) && time.isAfter(start)) {
+			if (time.isAfter(start) && time.isBefore(end)) {
 				return Integer.parseInt(entry[0]);
 			}
 		}
+		System.out.println(time);
 		return -1;
 	}
 	
