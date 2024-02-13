@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.opencsv.CSVReader;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 
 public class DataReader {
 	
@@ -15,7 +17,7 @@ public class DataReader {
 	private List<String[]> ICData;
 	private List<String[]> CFData;
 	private List<String[]> TargetData;
-	
+
 	LocalTime time = LocalTime.now();
 	public DataReader() {
 		try {
@@ -26,14 +28,16 @@ public class DataReader {
 			CSVReader ICReader = new CSVReader(IC);
 			CSVReader CFReader = new CSVReader(CF);
 			CSVReader TargetReader = new CSVReader(Target);
-			
+
 			ICData = ICReader.readAll();
 			CFData = CFReader.readAll();
 			TargetData = TargetReader.readAll();
-			
+
 			ICReader.close();
 			CFReader.close();
 			TargetReader.close();
+			
+
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -51,7 +55,7 @@ public class DataReader {
 	
 	public int getCurrentIC() {
 		LocalTime start, end;
-		for (String[] entry : ICData.subList(1,ICData.size())) {
+		for (String[] entry : ICData.subList(1,ICData.size()-1)) {
 			start = LocalTime.parse(entry[1]);
 			end = LocalTime.parse(entry[2]);
 			if (time.isBefore(end) && time.isAfter(start)) {
@@ -63,7 +67,7 @@ public class DataReader {
 	
 	public int getCurrentCF() {
 		LocalTime start, end;
-		for (String[] entry : CFData.subList(1, CFData.size())) {
+		for (String[] entry : CFData.subList(1, CFData.size()-1)) {
 			start = LocalTime.parse(entry[1]);
 			end = LocalTime.parse(entry[2]);
 			if (time.isAfter(start) && time.isBefore(end)) {

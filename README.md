@@ -6,4 +6,4 @@ Stores IC ratio and Correction Factor in .csv files, formatted as Value,Start Ti
 
 Stores Bolus information in .csv as BG,Carbs,Bolus,Time,Date
 
-Uses OpenCSV for CSV parsing, reading and writing, relevant .JARs in lib folder
+Uses OpenCSV for CSV parsing, reading and writing, .JAR and dependencies in lib folder
