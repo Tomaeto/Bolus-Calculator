@@ -4,17 +4,18 @@ import java.time.LocalTime;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvCustomBindByName;
 
 public class RatioBean {
 
 	@CsvBindByName
 	private int value;
 	
-	@CsvBindByName
-	private String start;
+	@CsvCustomBindByName(converter = LocalTimeConverter.class)
+	private LocalTime start;
 	
-	@CsvBindByName
-	private String end;
+	@CsvCustomBindByName(converter = LocalTimeConverter.class)
+	private LocalTime end;
 	
 	public RatioBean() {
 		
@@ -23,23 +24,15 @@ public class RatioBean {
 		return value;
 	}
 	
-	public void setRatio(int value) {
-		this.value = value;
-	}
-	
-	public String getStart() {
+	public LocalTime getStart() {
 		return start;
 	}
 	
-	public void setStart(String start) {
-		this.start = start;
-	}
-	
-	public String getEnd() {
+	public LocalTime getEnd() {
 		return end;
 	}
 	
-	public void setEnd(String end) {
-		this.end = end;
+	public String toString() {
+		return value + "|" + start + "|" + end;
 	}
 }

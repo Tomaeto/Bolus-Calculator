@@ -26,6 +26,6 @@ public class MainFrame extends JFrame {
     	
     	//Testing DataReader
 		DataReader reader = new DataReader();
-
+		reader.test();
     }
 }

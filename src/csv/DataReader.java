@@ -1,5 +1,6 @@
 package csv;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,8 +15,8 @@ public class DataReader {
 	
 
 	
-	private List<String[]> ICData;
-	private List<String[]> CFData;
+	private List<RatioBean> ICData;
+	private List<RatioBean> CFData;
 	private List<String[]> TargetData;
 
 	LocalTime time = LocalTime.now();
@@ -24,20 +25,17 @@ public class DataReader {
 			Reader IC = Files.newBufferedReader(Paths.get("./data/ICRatio.csv"));
 			Reader CF = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
 			Reader Target = Files.newBufferedReader(Paths.get("./data/Targets.csv"));
-			
-			CSVReader ICReader = new CSVReader(IC);
-			CSVReader CFReader = new CSVReader(CF);
+
+			CsvToBean<RatioBean> ICReader = new CsvToBeanBuilder<RatioBean>(IC).withType(RatioBean.class).build();
+			CsvToBean<RatioBean> CFReader = new CsvToBeanBuilder<RatioBean>(CF).withType(RatioBean.class).build();
 			CSVReader TargetReader = new CSVReader(Target);
+			
 
-			ICData = ICReader.readAll();
-			CFData = CFReader.readAll();
+			ICData = ICReader.parse();
+			CFData = CFReader.parse();
 			TargetData = TargetReader.readAll();
-
-			ICReader.close();
-			CFReader.close();
 			TargetReader.close();
 			
-
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -45,21 +43,31 @@ public class DataReader {
 
 	}
 	
-	public List<String[]> getICData() {
+	public void test() {
+		try {
+			Reader read = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
+			CsvToBean<RatioBean> cb = new CsvToBeanBuilder<RatioBean>(read).withType(RatioBean.class).build();
+			System.out.println(cb.parse().get(0).toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public List<RatioBean> getICData() {
 		return ICData;
 	}
 	
-	public List<String[]> getCFData() {
+	public List<RatioBean> getCFData() {
 		return CFData;
 	}
 	
 	public int getCurrentIC() {
 		LocalTime start, end;
-		for (String[] entry : ICData.subList(1,ICData.size()-1)) {
-			start = LocalTime.parse(entry[1]);
-			end = LocalTime.parse(entry[2]);
+		for (RatioBean entry : ICData) {
+			start = entry.getStart();
+			end = entry.getEnd();
 			if (time.isBefore(end) && time.isAfter(start)) {
-				return Integer.parseInt(entry[0]);
+				return entry.getRatio();
 			}
 		}
 		return -1;
@@ -67,11 +75,11 @@ public class DataReader {
 	
 	public int getCurrentCF() {
 		LocalTime start, end;
-		for (String[] entry : CFData.subList(1, CFData.size()-1)) {
-			start = LocalTime.parse(entry[1]);
-			end = LocalTime.parse(entry[2]);
+		for (RatioBean entry : CFData) {
+			start = entry.getStart();
+			end = entry.getEnd();
 			if (time.isAfter(start) && time.isBefore(end)) {
-				return Integer.parseInt(entry[0]);
+				return entry.getRatio();
 			}
 		}
 		System.out.println(time);
