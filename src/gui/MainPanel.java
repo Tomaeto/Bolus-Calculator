@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -12,11 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.NumberFormatter;
 
-import csv.DataReader;
+import csv.DataHandler;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
-	private DataReader reader = new DataReader();
+	private DataHandler reader = new DataHandler();
 	private int bloodGlucose = 0;
 	private int carbs = 0;
 	private double bolus;
@@ -122,6 +124,14 @@ public class MainPanel extends JPanel {
 				bolusText.setText(bolusText.getText() + " + (" + bloodGlucose + " - " + upperTarget + ") / " + correctionFactor);
 			}
 			calcButton.setText(Double.toString(bolus));
+			
+			try {
+				reader.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			super.update(getGraphics());
 		});
 		

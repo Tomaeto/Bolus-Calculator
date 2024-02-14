@@ -1,17 +1,28 @@
 package csv;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-public class DataReader {
+public class DataHandler {
 	
 
 	
@@ -20,7 +31,7 @@ public class DataReader {
 	private List<String[]> TargetData;
 
 	LocalTime time = LocalTime.now();
-	public DataReader() {
+	public DataHandler() {
 		try {
 			Reader IC = Files.newBufferedReader(Paths.get("./data/ICRatio.csv"));
 			Reader CF = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
@@ -43,23 +54,24 @@ public class DataReader {
 
 	}
 	
-	public void test() {
+	public void writeBolus(int bg, double bolus, int carbs, LocalDateTime timestamp) throws IOException {
+
+		Writer write = new FileWriter("./data/Bolus.csv", true);
+		StatefulBeanToCsv<BolusBean> sbc = new StatefulBeanToCsvBuilder<BolusBean>(write).build();
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		BolusBean bean = new BolusBean(bg, bolus, carbs, timestamp.format(format));
 		try {
-			Reader read = Files.newBufferedReader(Paths.get("./data/CorrectionFactor.csv"));
-			CsvToBean<RatioBean> cb = new CsvToBeanBuilder<RatioBean>(read).withType(RatioBean.class).build();
-			System.out.println(cb.parse().get(0).toString());
-		} catch (IOException e) {
+			sbc.write(bean);
+			write.close();
+		} catch (CsvDataTypeMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CsvRequiredFieldEmptyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public List<RatioBean> getICData() {
-		return ICData;
-	}
-	
-	public List<RatioBean> getCFData() {
-		return CFData;
-	}
+
 	
 	public int getCurrentIC() {
 		LocalTime start, end;

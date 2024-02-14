@@ -18,8 +18,8 @@ public class RatioBean {
 	private LocalTime end;
 	
 	public RatioBean() {
-		
 	}
+	
 	public int getRatio() {
 		return value;
 	}

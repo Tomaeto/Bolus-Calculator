@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 
 import com.opencsv.exceptions.CsvException;
 
-import csv.DataReader;
+import csv.DataHandler;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -23,9 +23,6 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) throws IOException, CsvException {
     	MainFrame frame = new MainFrame();
     	frame.setVisible(true);
-    	
-    	//Testing DataReader
-		DataReader reader = new DataReader();
-		reader.test();
+
     }
 }
