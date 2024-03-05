@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-text-1.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.36.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.45.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -14,11 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.NumberFormatter;
 
-import csv.DataHandler;
+import csv.CSVHandler;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
-	private DataHandler reader = new DataHandler();
+	private CSVHandler handler = new CSVHandler();
 	private int bloodGlucose = 0;
 	private int carbs = 0;
 	private double bolus;
@@ -27,9 +27,9 @@ public class MainPanel extends JPanel {
 	private int ICRatio;
 	
 	public MainPanel() {
-		correctionFactor = reader.getCurrentCF();
-		ICRatio = reader.getCurrentIC();
-		upperTarget = reader.getUpperTarget();
+		correctionFactor = handler.getCurrentCF();
+		ICRatio = handler.getCurrentIC();
+		upperTarget = handler.getUpperTarget();
 		this.setLayout(new BorderLayout());
 		this.add(buildTopPanel(), BorderLayout.NORTH);
 		this.add(buildMidPanel(), BorderLayout.CENTER);
@@ -126,7 +126,7 @@ public class MainPanel extends JPanel {
 			calcButton.setText(Double.toString(bolus));
 			
 			try {
-				reader.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
+				handler.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -1,11 +1,5 @@
 package gui;
-import java.io.IOException;
-
 import javax.swing.JFrame;
-
-import com.opencsv.exceptions.CsvException;
-
-import csv.DataHandler;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -20,9 +14,11 @@ public class MainFrame extends JFrame {
 	}
 
 
-    public static void main(String[] args) throws IOException, CsvException {
+    public static void main(String[] args) {
     	MainFrame frame = new MainFrame();
-    	frame.setVisible(true);
 
+    	frame.setVisible(true);
     }
+ 
+	
 }
