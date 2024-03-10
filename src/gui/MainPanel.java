@@ -18,6 +18,8 @@ import csv.CSVHandler;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
+	
+	//Private variables for all relevant values
 	private CSVHandler handler = new CSVHandler();
 	private int bloodGlucose = 0;
 	private int carbs = 0;
@@ -26,6 +28,7 @@ public class MainPanel extends JPanel {
 	private int correctionFactor;
 	private int ICRatio;
 	
+
 	public MainPanel() {
 		correctionFactor = handler.getCurrentCF();
 		ICRatio = handler.getCurrentIC();
@@ -36,7 +39,7 @@ public class MainPanel extends JPanel {
 		this.add(buildBotPanel(), BorderLayout.SOUTH);
 	}
 
-	
+
 	private JPanel buildTopPanel() {
 		JPanel panel = new JPanel();
 		JLabel BGLabel = new JLabel("BG: ");
@@ -99,6 +102,7 @@ public class MainPanel extends JPanel {
         return panel;
 	}
 	
+
 	private JPanel buildMidPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel ICLabel = new JLabel("Current IC Ratio: " + ICRatio);
@@ -108,6 +112,7 @@ public class MainPanel extends JPanel {
 		return panel;
 	}
 	
+
 	private JPanel buildBotPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel bolusText = new JLabel("Bolus = " + carbs + " / " + ICRatio);

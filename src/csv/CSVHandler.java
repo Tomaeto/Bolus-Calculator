@@ -31,17 +31,19 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 public class CSVHandler {
 	
 
-	
+	//Lists for storing user data from CSV files
 	private List<RatioBean> ICData;
 	private List<RatioBean> CFData;
 	private List<String[]> TargetData;
 
 	LocalTime time;
 	public CSVHandler() {
+		
+		//Getting user data for IC/CF ratios and target values
 		try {
-			Reader IC = Files.newBufferedReader(Paths.get("./data/csv/ICRatio.csv"));
-			Reader CF = Files.newBufferedReader(Paths.get("./data/csv/CorrectionFactor.csv"));
-			Reader Target = getTargetReader("./data/csv/Targets.csv");
+			Reader IC = getRatioReader("ICRatio.csv");
+			Reader CF = getRatioReader("CorrectionFactor.csv");
+			Reader Target = getTargetReader("Targets.csv");
 
 			
 			CsvToBean<RatioBean> ICReader = new CsvToBeanBuilder<RatioBean>(IC).withType(RatioBean.class).build();
@@ -60,11 +62,13 @@ public class CSVHandler {
 
 	}
 	
-	public BufferedReader getTargetReader(String filepath) throws IOException {
+
+	private BufferedReader getTargetReader(String filename) throws IOException {
 
 		//Variables needed to create new reader file if not found
 		JTextField lowerField, upperField;
 		JPanel optionPanel;
+		String filepath = "./data/csv/" + filename;
 		File reader = new File(filepath);
 		CSVWriter writer;
 		
@@ -106,7 +110,7 @@ public class CSVHandler {
 			
 		}
 
-		//Attempt to return new BufferedReader for the filepath, if fail, print stack trace and exit program
+		//Attempt to return new BufferedReader for the filepath, if it fails, print stack trace and exit program
 		try {
 			return Files.newBufferedReader(Paths.get(filepath));
 		}
@@ -118,12 +122,110 @@ public class CSVHandler {
 		return null;
 	}
 	
+
+	private BufferedReader getRatioReader(String filename) throws IOException {
+		
+		//Variables needed for building ratio file if not found
+		JTextField startField, endField, valueField;
+		LocalTime start, end = LocalTime.parse("00:00");
+		JPanel optionPanel;
+		CSVWriter writer;
+		String filepath = "./data/csv/" + filename;
+		File reader = new File(filepath);
+		
+		//If entered filename doesn't exist, show relevant error message, build option panel for entering value and time range
+		if (!reader.isFile()) {
+			String message = "Correction Factor data not found, please enter values and time ranges in 24-hour format.";
+			if (filename.equals("ICRatio.csv")) {
+				message = "IC Ratio data not found, please enter values and time ranges in 24-hour format.";
+			}
+			JOptionPane.showMessageDialog(null, message);
+			start = LocalTime.parse("00:00");
+			startField = new JTextField("00:00");
+			endField = new JTextField();
+			valueField = new JTextField();
+			startField.setEditable(false);
+			optionPanel = new JPanel(new GridLayout(3,3));
+			optionPanel.add(new JLabel("Enter start time: "));
+			optionPanel.add(startField);
+			optionPanel.add(new JLabel("Enter end time: "));
+			optionPanel.add(endField);
+			optionPanel.add(new JLabel("Enter ratio/factor: "));
+			optionPanel.add(valueField);
+			
+			//Creating new ratio file, entering headers
+			reader.createNewFile();
+			writer = new CSVWriter(new FileWriter(reader));
+			String[] headers = {"value", "start", "end"};
+			writer.writeNext(headers);
+
+
+			//While the previous end time is not 23:59, continue taking entries for ratio and time range
+			while (!startField.getText().equals("23:59")) {
+
+				//Getting value and range
+				JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+				boolean validInput = false;
+				
+				//Testing if inputs are valid
+				while (!validInput) {
+					
+					//Try to parse given values and check if start is before end
+					try {
+						start = LocalTime.parse(startField.getText());
+						end = LocalTime.parse(endField.getText());
+						Integer.parseInt(valueField.getText());
+						validInput = start.isBefore(end);
+					}
+					//Catch error, show error message and reprompt for input
+					catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Invalid inputs, enter time range in HH:MM format and a valid integer ratio.");
+						JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+						continue;
+					}
+				
+					//If values are valid but start is not before end, show error message dn reprompt for input
+					if (!validInput) {
+						JOptionPane.showMessageDialog(null, "Invalid time range, enter time range with start before end.");
+						JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+					}
+				}
+				
+				//If values are valid, build String array as value,start,end and write to file
+				String[] next = {valueField.getText(), startField.getText(), endField.getText()};
+				writer.writeNext(next);
+				
+				//Set next start time to previous end time and reset end and ratio fields for next pass
+				startField.setText(endField.getText());
+				endField.setText("");
+				valueField.setText("");
+			}
+			
+			//Closing writer after all values are entered for entire day range
+			writer.close();
+		}
+		
+		//Attempt to return BufferedReader for the filepath, if it fails, print stack trace for error and exit
+		try {
+			return Files.newBufferedReader(Paths.get(filepath));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		return null;
+	}
+	
+
 	public void writeBolus(int bg, double bolus, int carbs, LocalDateTime timestamp) throws IOException {
 
+		//Creating BeanToCSV for writing BolusBean to file and building BolusBean from given data
 		Writer write = new FileWriter("./data/csv/Bolus.csv", true);
 		StatefulBeanToCsv<BolusBean> sbc = new StatefulBeanToCsvBuilder<BolusBean>(write).build();
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		BolusBean bean = new BolusBean(bg, bolus, carbs, timestamp.format(format));
+		
+		//Writing to Bolus.csv
 		try {
 			sbc.write(bean);
 			write.close();
@@ -136,7 +238,7 @@ public class CSVHandler {
 		}
 	}
 
-	
+
 	public int getCurrentIC() {
 		LocalTime start, end;
 		for (RatioBean entry : ICData) {
@@ -149,7 +251,7 @@ public class CSVHandler {
 		}
 		return -1;
 	}
-	
+
 	public int getCurrentCF() {
 		LocalTime start, end;
 		for (RatioBean entry : CFData) {
@@ -162,7 +264,7 @@ public class CSVHandler {
 		}
 		return -1;
 	}
-	
+
 	public int getUpperTarget() {
 		return Integer.parseInt(TargetData.get(1)[0]);
 	}
