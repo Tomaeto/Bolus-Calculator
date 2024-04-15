@@ -28,6 +28,7 @@ public class MainFrame extends JFrame {
     	MainFrame frame = new MainFrame();
     	frame.setVisible(true);
     	SqliteHandler h = new SqliteHandler();
+    	System.out.println(h.getCurrentIC());
     }
 
 }
