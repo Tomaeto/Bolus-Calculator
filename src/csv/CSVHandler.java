@@ -127,7 +127,7 @@ public class CSVHandler {
 		
 		//Variables needed for building ratio file if not found
 		JTextField startField, endField, valueField;
-		LocalTime start, end = LocalTime.parse("00:00");
+		LocalTime start = LocalTime.parse("00:00"), end = LocalTime.parse("00:00");
 		JPanel optionPanel;
 		CSVWriter writer;
 		String filepath = "./data/csv/" + filename;
@@ -140,7 +140,6 @@ public class CSVHandler {
 				message = "IC Ratio data not found, please enter values and time ranges in 24-hour format.";
 			}
 			JOptionPane.showMessageDialog(null, message);
-			start = LocalTime.parse("00:00");
 			startField = new JTextField("00:00");
 			endField = new JTextField();
 			valueField = new JTextField();

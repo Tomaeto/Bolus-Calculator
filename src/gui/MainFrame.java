@@ -25,10 +25,10 @@ public class MainFrame extends JFrame {
 
 
     public static void main(String[] args) throws IOException, SQLException {
-    	MainFrame frame = new MainFrame();
-    	frame.setVisible(true);
+ //   	MainFrame frame = new MainFrame();
+ //   	frame.setVisible(true);
     	SqliteHandler h = new SqliteHandler();
-    	System.out.println(h.getCurrentIC());
+    	
     }
 
 }

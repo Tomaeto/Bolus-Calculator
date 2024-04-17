@@ -1,9 +1,11 @@
 package sqlite;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqliteDbAccessor {
@@ -14,8 +16,8 @@ public class SqliteDbAccessor {
 	private ResultSet rs;
 	
 	private String connectionUrl;
-	
-	private String defaultConnUrl = "jdbc:sqlite:./data/sql/data.db";
+	private String filepath = "./data/sql/data.db";
+	private String defaultConnUrl = "jdbc:sqlite:" + filepath;
 	
 	/**
 	 * Constructor for SqlServerDbAccessor, sets connectionUrl to default value
