@@ -14,7 +14,7 @@ import sqlite.SqliteHandler;
 public class MainFrame extends JFrame {
 
 	//Setting up frame and adding Main Panel
-	public MainFrame() {
+	public MainFrame() throws SQLException {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 200);
         setTitle("Bolus Calculator");
@@ -25,10 +25,8 @@ public class MainFrame extends JFrame {
 
 
     public static void main(String[] args) throws IOException, SQLException {
- //   	MainFrame frame = new MainFrame();
-  //  	frame.setVisible(true);
-    	SqliteHandler h = new SqliteHandler();
-    	
+    	MainFrame frame = new MainFrame();
+    	frame.setVisible(true);	
     }
 
 }

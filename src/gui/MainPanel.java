@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 
@@ -15,12 +16,16 @@ import javax.swing.JPanel;
 import javax.swing.text.NumberFormatter;
 
 import csv.CSVHandler;
+import sqlite.SqliteHandler;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
 	
 	//Private variables for all relevant values
-	private CSVHandler handler = new CSVHandler();
+	private CSVHandler csvHandler = new CSVHandler();
+	private SqliteHandler sqlHandler = new SqliteHandler();
+	private Handler handler = csvHandler;
+//	private Handler handler = sqlHandler;
 	private int bloodGlucose = 0;
 	private int carbs = 0;
 	private double bolus;
@@ -29,7 +34,7 @@ public class MainPanel extends JPanel {
 	private int ICRatio;
 	
 
-	public MainPanel() {
+	public MainPanel() throws SQLException {
 		correctionFactor = handler.getCurrentCF();
 		ICRatio = handler.getCurrentIC();
 		upperTarget = handler.getUpperTarget();
@@ -131,8 +136,9 @@ public class MainPanel extends JPanel {
 			calcButton.setText(Double.toString(bolus));
 			
 			try {
-				handler.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
-			} catch (IOException e1) {
+				sqlHandler.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
+				csvHandler.writeBolus(bloodGlucose, bolus, carbs, LocalDateTime.now());
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
