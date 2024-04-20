@@ -26,8 +26,8 @@ public class SqliteHandler {
 				+"upper INTEGER, lower INTEGER, correct INTEGER);";
 		
 		String factorSql = "CREATE TABLE IF NOT EXISTS factors("
-				+"id INTEGER, type INTEGER, value INTEGER NOT NULL,"
-				+"start TEXT, end TEXT, FOREIGN KEY (id) REFERENCES user(id));";
+				+"type INTEGER, value INTEGER NOT NULL,"
+				+"start TEXT, end TEXT, id INTEGER, FOREIGN KEY (id) REFERENCES user(id));";
 		
 		String bolusSql = "CREATE TABLE IF NOT EXISTS bolus("
 				+"id INTEGER, carbCount INTEGER, BG INTEGER,"
@@ -42,7 +42,6 @@ public class SqliteHandler {
 
 		
 		JPanel optionPanel;
-		JTextField startField, endField, valueField;
 		LocalTime start = LocalTime.parse("00:00"), end = LocalTime.parse("00:00");
 		if (tableSizes.getInt(1) == 0) {
 			//If user table is empty
@@ -78,11 +77,11 @@ public class SqliteHandler {
 		}
 		
 		if (tableSizes.getInt(2) == 0) {
-			//If factors table has no IC
+			writeFactors(0);
 		}
 		
 		if (tableSizes.getInt(3) == 0) {
-			//If factors table has no CF
+			writeFactors(1);
 		}
 
 		String userQuery = "SELECT * FROM user;";
@@ -95,6 +94,65 @@ public class SqliteHandler {
 		CFData = db.getConnection().prepareStatement(CFQuery).executeQuery();
 	}
 
+	private void writeFactors(int type) throws SQLException {
+		LocalTime start, end;
+		JPanel optionPanel = new JPanel(new GridLayout(3,2));
+		String message = "No IC data found, please enter values and time ranges in 24-hour format, ending at 23:59.";
+		if (type == 1) message = "No CF data found, please enter values and time ranges in 24-hour format, ending at 23:59.";
+		JOptionPane.showMessageDialog(null, message);
+		JTextField startField = new JTextField("00:00");
+		JTextField endField = new JTextField();
+		JTextField valueField = new JTextField();
+		startField.setEditable(false);
+		optionPanel.add(new JLabel("Enter start time: "));
+		optionPanel.add(startField);
+		optionPanel.add(new JLabel("Enter end time: "));
+		optionPanel.add(endField);
+		optionPanel.add(new JLabel("Enter factor/ratio: "));
+		optionPanel.add(valueField);
+		
+		String query;
+		while (!startField.getText().equals("23:59")) {
+			JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+			boolean validInput = false;
+			
+			//Testing if inputs are valid
+			while (!validInput) {
+				
+				//Try to parse given values and check if start is before end
+				try {
+					start = LocalTime.parse(startField.getText());
+					end = LocalTime.parse(endField.getText());
+					Integer.parseInt(valueField.getText());
+					validInput = start.isBefore(end);
+				}
+				//Catch error, show error message and reprompt for input
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Invalid inputs, enter time range in HH:MM format and a valid integer ratio.");
+					JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+					continue;
+				}
+			
+				//If values are valid but start is not before end, show error message dn reprompt for input
+				if (!validInput) {
+					JOptionPane.showMessageDialog(null, "Invalid time range, enter time range with start before end.");
+					JOptionPane.showConfirmDialog(null, optionPanel, null, JOptionPane.DEFAULT_OPTION);
+				}
+			}
+
+			//If all values are valid, insert row into factors table
+			query = "INSERT INTO factors(id, type, value, start, end) VALUES(1, "
+					+ type + ", " + valueField.getText() + ", \"" + startField.getText()
+					+ "\", \"" + endField.getText() + "\");";
+			db.getConnection().prepareStatement(query).executeUpdate();
+			
+			//Set next start time to previous end time and reset end and ratio fields for next pass
+			startField.setText(endField.getText());
+			endField.setText("");
+			valueField.setText("");
+		}
+	}
+	
 	public void writeBolus() throws SQLException {
 		
 	}

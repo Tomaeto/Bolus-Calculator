@@ -144,7 +144,7 @@ public class CSVHandler {
 			endField = new JTextField();
 			valueField = new JTextField();
 			startField.setEditable(false);
-			optionPanel = new JPanel(new GridLayout(3,3));
+			optionPanel = new JPanel(new GridLayout(3,2));
 			optionPanel.add(new JLabel("Enter start time: "));
 			optionPanel.add(startField);
 			optionPanel.add(new JLabel("Enter end time: "));
