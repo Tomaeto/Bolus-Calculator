@@ -28,7 +28,9 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-public class CSVHandler {
+import gui.Handler;
+
+public class CSVHandler extends Handler{
 	
 
 	//Lists for storing user data from CSV files
@@ -216,23 +218,20 @@ public class CSVHandler {
 	}
 	
 
-	public void writeBolus(int bg, double bolus, int carbs, LocalDateTime timestamp) throws IOException {
+	public void writeBolus(int bg, double bolus, int carbs, LocalDateTime timestamp) {
 
 		//Creating BeanToCSV for writing BolusBean to file and building BolusBean from given data
+		try {
 		Writer write = new FileWriter("./data/csv/Bolus.csv", true);
 		StatefulBeanToCsv<BolusBean> sbc = new StatefulBeanToCsvBuilder<BolusBean>(write).build();
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		BolusBean bean = new BolusBean(bg, bolus, carbs, timestamp.format(format));
 		
 		//Writing to Bolus.csv
-		try {
 			sbc.write(bean);
 			write.close();
-		} catch (CsvDataTypeMismatchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CsvRequiredFieldEmptyException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

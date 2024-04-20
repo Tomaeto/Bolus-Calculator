@@ -1,17 +1,20 @@
 package sqlite;
 
 import java.awt.GridLayout;
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class SqliteHandler {
+import gui.Handler;
+
+public class SqliteHandler extends Handler {
 
 	private ResultSet userData; //ID, Name, Upper, Lower, CorrectAbove
 	private ResultSet ICData;  //Value, Start, End
@@ -31,7 +34,7 @@ public class SqliteHandler {
 		
 		String bolusSql = "CREATE TABLE IF NOT EXISTS bolus("
 				+"id INTEGER, carbCount INTEGER, BG INTEGER,"
-				+"bolusAmt INTEGER, timestamp TEXT, FOREIGN KEY (id) REFERENCES user(id));";
+				+"bolusAmt REAL, timestamp TEXT, FOREIGN KEY (id) REFERENCES user(id));";
 		db.getConnection().prepareStatement(userSql).execute();
 		db.getConnection().prepareStatement(factorSql).execute();
 		db.getConnection().prepareStatement(bolusSql).execute();
@@ -42,7 +45,6 @@ public class SqliteHandler {
 
 		
 		JPanel optionPanel;
-		LocalTime start = LocalTime.parse("00:00"), end = LocalTime.parse("00:00");
 		if (tableSizes.getInt(1) == 0) {
 			//If user table is empty
 			JTextField nameField = new JTextField(3);
@@ -153,39 +155,69 @@ public class SqliteHandler {
 		}
 	}
 	
-	public void writeBolus() throws SQLException {
-		
+	public void writeBolus(int bg, double bolus, int carbs, LocalDateTime timestamp) {
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String query = "INSERT INTO bolus(id, carbCount, BG, bolusAmt, timestamp) VALUES(1,"
+				+ carbs + ", " + bg + ", " + bolus + ", \"" + timestamp.format(format) + "\");";
+		try {
+			db.getConnection().prepareStatement(query).executeUpdate();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public int getCurrentCF() throws SQLException {
+	public int getCurrentCF() {
 		LocalTime start, end;
-		while (CFData.next()) {
-			start = LocalTime.parse(CFData.getString(2));
-			end = LocalTime.parse(CFData.getString(3));
-			if (LocalTime.now().isBefore(end) && LocalTime.now().isAfter(start)) {
-				return CFData.getInt(1);
+		try {
+			while (CFData.next()) {
+				start = LocalTime.parse(CFData.getString(2));
+				end = LocalTime.parse(CFData.getString(3));
+				if (LocalTime.now().isBefore(end) && LocalTime.now().isAfter(start)) {
+					return CFData.getInt(1);
+				}
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		};
 		return -1;
 	}
 
-	public int getCurrentIC() throws SQLException {
+	public int getCurrentIC() {
 		LocalTime start, end;
-		while (ICData.next()) {
-			start = LocalTime.parse(ICData.getString(2));
-			end = LocalTime.parse(ICData.getString(3));
-			if (LocalTime.now().isBefore(end) && LocalTime.now().isAfter(start)) {
-				return ICData.getInt(1);
+		try {
+			while (ICData.next()) {
+				start = LocalTime.parse(ICData.getString(2));
+				end = LocalTime.parse(ICData.getString(3));
+				if (LocalTime.now().isBefore(end) && LocalTime.now().isAfter(start)) {
+					return ICData.getInt(1);
+				}
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		};
 		return -1;
 	}
 
-	public int getUpperTarget() throws SQLException {
-		return userData.getInt(3);
+	public int getUpperTarget() {
+		try {
+			return userData.getInt(3);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
-	public int getLowerTarget() throws SQLException {
-		return userData.getInt(4);
+	public int getLowerTarget() {
+		try {
+			return userData.getInt(4);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }
