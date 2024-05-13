@@ -10,6 +10,7 @@ Stores Bolus information in .csv as BG,Bolus,Carbs,Timestamp (YYYY-MM-dd HH:mm)
 Uses OpenCSV for CSV parsing, reading and writing.
 
 Uses SQLite for database reading/management.
+
 	src
 		/csv - contains Classes for reading/writing .CSV files and relevant Bean classes
 		
@@ -20,3 +21,12 @@ Uses SQLite for database reading/management.
 	
 	
 	lib - contains .JARs for OpenCSV/SQLite and relevant dependencies
+
+
+ # To Run
+
+ * Requires Java 17.0 or later
+
+Open Terminal in root directory and run the following:
+
+	java -jar BolusCalc.jar
