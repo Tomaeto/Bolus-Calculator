@@ -1,3 +1,4 @@
+#Diabetes Bolus Calculator
 Program for caluclating bolus for Type 1 Diabetes
 
 
@@ -8,7 +9,6 @@ Stores Bolus information in .csv as BG,Bolus,Carbs,Timestamp (YYYY-MM-dd HH:mm)
 Uses OpenCSV for CSV parsing, reading and writing.
 
 Uses SQLite for database reading/management.
-
 	src
 		/csv - contains Classes for reading/writing .CSV files and relevant Bean classes
 		
