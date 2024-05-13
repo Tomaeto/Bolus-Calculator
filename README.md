@@ -1,4 +1,5 @@
-#Diabetes Bolus Calculator
+# Diabetes Bolus Calculator
+
 Program for caluclating bolus for Type 1 Diabetes
 
 
